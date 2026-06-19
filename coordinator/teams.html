@@ -21,17 +21,17 @@
         </ul>
     </div>
     <div class="main-content">
+        <!-- TOP BAR – Fixed dropdown -->
         <div class="top-bar">
             <div class="page-title">Teams</div>
             <div class="user-info">
-                <!-- DROPDOWN (like HR) -->
                 <div class="dropdown">
-                    <button class="dropbtn" id="dropbtn">
+                    <button class="dropbtn" id="dropbtn" onclick="document.getElementById('dropdownMenu').classList.toggle('show');">
                         <span id="userNameDisplay">Coordinator</span> <span style="font-size:0.8rem;">▼</span>
                     </button>
                     <div id="dropdownMenu" class="dropdown-content">
                         <a href="../change-password.html">Change Password</a>
-                        <a href="../backend/api/logout.php">Logout</a>
+                        <a href="../backend/api/logout.php" onclick="event.stopPropagation();">Logout</a>
                     </div>
                 </div>
             </div>

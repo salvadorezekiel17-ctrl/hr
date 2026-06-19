@@ -1,20 +1,26 @@
-// Coordinator Dashboard – Separate JS
-const API_BASE = '/hrms/backend/api/';
+// Coordinator Dashboard – Separate JS (uses global API_BASE)
+// API_BASE is already defined in utils.js – do NOT redeclare it here.
+
 let allEmployees = [];
 const teamNames = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo', 'Foxtrot', 'Golf'];
 
 async function fetchEmployees() {
-    const res = await fetch(API_BASE + 'get_employees.php', { credentials: 'include' });
-    const data = await res.json();
-    if (data.success) {
-        allEmployees = data.data;
-        renderAvailable();
-        renderTeams();
+    try {
+        const res = await fetch(API_BASE + 'get_employees.php', { credentials: 'include' });
+        const data = await res.json();
+        if (data.success) {
+            allEmployees = data.data;
+            renderAvailable();
+            renderTeams();
+        }
+    } catch (e) {
+        console.error('Error loading employees:', e);
     }
 }
 
 function renderAvailable() {
     const container = document.getElementById('availableEmployeesList');
+    if (!container) return;
     const available = allEmployees.filter(emp => !emp.current_team);
     if (available.length === 0) {
         container.innerHTML = '<div class="empty-message">No available employees.</div>';
@@ -22,13 +28,24 @@ function renderAvailable() {
     }
     let html = '';
     for (let emp of available) {
-        html += '<div class="available-employee-item"><div><span class="employee-name">' + emp.name + '</span></div><button class="btn-assign" data-id="' + emp.id + '" data-name="' + emp.name + '">Assign to Team</button></div>';
+        html += `<div class="available-employee-item">
+            <div><span class="employee-name">${emp.name}</span></div>
+            <button class="btn-assign" data-id="${emp.id}" data-name="${emp.name}">Assign to Team</button>
+        </div>`;
     }
     container.innerHTML = html;
+
+    // Attach assign button events
+    document.querySelectorAll('.btn-assign').forEach(btn => {
+        btn.addEventListener('click', function() {
+            openModal(this.dataset.id, this.dataset.name);
+        });
+    });
 }
 
 function renderTeams() {
     const container = document.getElementById('teamsList');
+    if (!container) return;
     let teamMembers = {};
     for (let team of teamNames) { teamMembers[team] = []; }
     for (let emp of allEmployees) {
@@ -40,7 +57,10 @@ function renderTeams() {
     for (let team of teamNames) {
         const members = teamMembers[team];
         const memberNames = members.length > 0 ? members.join(', ') : 'No members';
-        html += '<div class="team-card"><div class="team-header"><span>Team ' + team + '</span><span>' + members.length + ' members</span></div><div class="team-members-list">' + memberNames + '</div></div>';
+        html += `<div class="team-card">
+            <div class="team-header"><span>Team ${team}</span><span>${members.length} members</span></div>
+            <div class="team-members-list">${memberNames}</div>
+        </div>`;
     }
     container.innerHTML = html;
 }
@@ -56,24 +76,20 @@ async function assignToDatabase(id, team) {
 }
 
 let currentId = null, currentName = null;
+
 function openModal(id, name) {
     currentId = id;
     currentName = name;
     document.getElementById('assignEmployeeName').innerHTML = '<strong>' + name + '</strong>';
     document.getElementById('assignModal').style.display = 'flex';
 }
+
 function closeModal() {
     document.getElementById('assignModal').style.display = 'none';
     currentId = null;
 }
 
-document.getElementById('availableEmployeesList').addEventListener('click', function(e) {
-    if (e.target.classList.contains('btn-assign')) {
-        openModal(parseInt(e.target.getAttribute('data-id')), e.target.getAttribute('data-name'));
-    }
-});
-
-document.getElementById('confirmAssignBtn').onclick = async function() {
+document.getElementById('confirmAssignBtn')?.addEventListener('click', async function() {
     if (!currentId) return;
     const team = document.getElementById('teamSelect').value;
     const result = await assignToDatabase(currentId, team);
@@ -84,9 +100,12 @@ document.getElementById('confirmAssignBtn').onclick = async function() {
     } else {
         alert('Error: ' + result.message);
     }
+});
+
+document.getElementById('cancelAssignBtn')?.addEventListener('click', closeModal);
+window.onclick = function(e) {
+    if (e.target === document.getElementById('assignModal')) closeModal();
 };
-document.getElementById('cancelAssignBtn').onclick = closeModal;
-window.onclick = function(e) { if (e.target === document.getElementById('assignModal')) closeModal(); };
 
 // Start
 fetchEmployees();

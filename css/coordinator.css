@@ -724,3 +724,65 @@ body {
 .show {
     display: block;
 }
+.dropdown-logout-btn {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-weight: 600;
+    padding: 10px 20px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-top: 1px solid #e2e8f0;
+}
+.dropdown-logout-btn:hover {
+    background: #f0f2f5;
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropbtn {
+    background: none;
+    border: none;
+    color: #1e2a3e;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 20px;
+    transition: 0.2s;
+}
+.dropbtn:hover {
+    background: #f0f2f5;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    min-width: 180px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    border-radius: 12px;
+    padding: 8px 0;
+    z-index: 1000;
+}
+.dropdown-content a {
+    color: #2c3e4e;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: block;
+    font-size: 0.9rem;
+}
+.dropdown-content a:hover {
+    background: #f0f2f5;
+}
+.dropdown-content a:last-child {
+    border-top: 1px solid #e2e8f0;
+    color: #e74c3c;
+    font-weight: 600;
+}
+.dropdown-content.show {
+    display: block;
+}

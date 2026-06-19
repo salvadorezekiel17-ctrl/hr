@@ -745,3 +745,8 @@ body.apply-page {
     margin-right: 4px !important;
     display: inline-block !important;
 }
+
+.dropdown-content a {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}

@@ -14,6 +14,8 @@ if ($user_role !== 'coordinator') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coordinator Dashboard | CKL Construction</title>
     <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/coordinator.css">
     <link rel="stylesheet" href="../css/coordinator-dashboard.css">
 </head>
 <body>
@@ -29,17 +31,17 @@ if ($user_role !== 'coordinator') {
         </ul>
     </div>
     <div class="main-content">
+        <!-- TOP BAR – Fixed dropdown -->
         <div class="top-bar">
             <div class="page-title">Coordinator Dashboard</div>
             <div class="user-info">
-                <!-- DROPDOWN (like HR) -->
                 <div class="dropdown">
-                    <button class="dropbtn" id="dropbtn">
+                    <button class="dropbtn" id="dropbtn" onclick="document.getElementById('dropdownMenu').classList.toggle('show');">
                         <span id="userNameDisplay">Coordinator</span> <span style="font-size:0.8rem;">▼</span>
                     </button>
                     <div id="dropdownMenu" class="dropdown-content">
                         <a href="../change-password.html">Change Password</a>
-                        <a href="../backend/api/logout.php">Logout</a>
+                        <a href="../backend/api/logout.php" onclick="event.stopPropagation();">Logout</a>
                     </div>
                 </div>
             </div>
