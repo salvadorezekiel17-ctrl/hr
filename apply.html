@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply | CKL Construction</title>
+    <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
+    <link rel="stylesheet" href="css/global.css">
+</head>
+<body class="apply-page">
+    <div class="container">
+        <h1>Apply to CKL Construction</h1>
+        <p class="sub">Fill out the form below to submit your application</p>
+
+        <form id="applyForm">
+            <!-- PERSONAL INFORMATION -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="email" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="text" id="phone">
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="date_of_birth">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea id="address" rows="2"></textarea>
+            </div>
+
+            <!-- EMPLOYMENT INFORMATION -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Position Applying For</label>
+                    <select id="position">
+                        <option value="Lineman">Lineman</option>
+                        <option value="Driver">Driver</option>
+                        <option value="Helper">Helper</option>
+                        <option value="Supervisor">Supervisor</option>
+                        <option value="Coordinator">Coordinator</option>
+                        <option value="HR">HR</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Years of Experience</label>
+                    <input type="number" id="years_experience" min="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Skills</label>
+                <textarea id="skills" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Previous Work Experience</label>
+                <textarea id="experience" rows="3"></textarea>
+            </div>
+
+            <!-- ADDITIONAL INFORMATION -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Emergency Contact</label>
+                    <input type="text" id="emergency_contact">
+                </div>
+                <div class="form-group">
+                    <label>Emergency Contact Phone</label>
+                    <input type="text" id="emergency_phone">
+                </div>
+            </div>
+            <button type="submit" class="btn-submit">Submit Application</button>
+            <div id="message" class="message"></div>
+        </form>
+        <div class="footer">CKL Construction Services • Equal Opportunity Employer</div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/forms.js"></script>
+    <script src="js/apply.js"></script>
+</body>
+</html>

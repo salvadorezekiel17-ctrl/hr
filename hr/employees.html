@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/hr.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employees | HR | CKL Construction</title>
+    <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header"><h2>CKL HRMS</h2><p>Construction Services</p></div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="dashboard.php">Dashboard</a></li>
+            <li class="nav-item active"><a href="employees.html">Employee Directory</a></li>
+            <li class="nav-item"><a href="biometric-logs.html">Biometric Logs</a></li>
+            <li class="nav-item"><a href="field-deployments.html">Field Deployments</a></li>
+            <li class="nav-item"><a href="leave-requests.html">Leave Requests</a></li>
+            <li class="nav-item"><a href="payroll.html">Payroll</a></li>
+            <li class="nav-item"><a href="reports.html">Reports</a></li>
+            <li class="nav-item"><a href="hiring.html">Hiring</a></li>
+            <li class="nav-item"><a href="create-account.html">Create New Account</a></li>
+            <li class="nav-item"><a href="offboarding-history.html">Offboarding History</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">Employee Directory</div>
+            <div class="user-info">
+                <div class="dropdown">
+                    <button class="dropbtn" id="dropbtn">
+                        <span id="userNameDisplay">HR Administrator</span> <span style="font-size:0.8rem;">▼</span>
+                    </button>
+                    <div id="dropdownMenu" class="dropdown-content">
+                        <a href="../change-password.html">Change Password</a>
+                        <a href="../backend/api/logout.php">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="panel">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search by name or ID">
+                    <button class="add-btn" id="addEmployeeBtn">Add Employee</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="employeeTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Department</th>
+                                <th>Daily Rate</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeTableBody">
+                            <tr><td colspan="7" style="text-align:center;">Loading employees...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <h3>Add New Employee</h3>
+            <label>Name</label>
+            <input type="text" id="addName" placeholder="Enter full name">
+            <label>Position</label>
+            <input type="text" id="addPosition" placeholder="e.g., TL, LINEMAN, DRIVER, HELPER">
+            <label>Department</label>
+            <input type="text" id="addDepartment" placeholder="e.g., Operations, Field, Logistics">
+            <label>Daily Rate (₱)</label>
+            <input type="number" id="addDailyRate" placeholder="e.g., 800">
+            <label>Status</label>
+            <select id="addStatus">
+                <option>Active</option>
+                <option>On Leave</option>
+                <option>Probationary</option>
+                <option>Inactive</option>
+            </select>
+            <div class="modal-buttons">
+                <button class="btn-submit" onclick="closeAddModal()">Cancel</button>
+                <button class="save-btn" id="saveAddBtn">Add Employee</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Employee</h3>
+            <input type="hidden" id="editId">
+            <label>Name</label>
+            <input type="text" id="editName">
+            <label>Position</label>
+            <input type="text" id="editPosition">
+            <label>Department</label>
+            <input type="text" id="editDepartment">
+            <label>Daily Rate (₱)</label>
+            <input type="number" id="editDailyRate">
+            <label>Status</label>
+            <select id="editStatus">
+                <option>Active</option>
+                <option>On Leave</option>
+                <option>Probationary</option>
+                <option>Inactive</option>
+            </select>
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+                <button class="save-btn" id="saveEditBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offboard Modal -->
+    <div id="offboardModal" class="modal">
+        <div class="modal-content">
+            <h3>Offboard Employee</h3>
+            <input type="hidden" id="offboardId">
+            <p id="offboardName"></p>
+            <label>Offboarding Date (YY/MM/DD)</label>
+            <input type="text" id="offboardDate" placeholder="26/06/30">
+            <label>Reason</label>
+            <select id="offboardReason">
+                <option>Resigned</option>
+                <option>Terminated</option>
+                <option>End of Contract</option>
+                <option>Retired</option>
+            </select>
+            <label>Remarks (optional)</label>
+            <textarea id="offboardRemarks" rows="2" placeholder="Additional notes..."></textarea>
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeOffboardModal()">Cancel</button>
+                <button class="save-btn" id="saveOffboardBtn">Confirm Offboarding</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/employees.js"></script>
+</body>
+</html>

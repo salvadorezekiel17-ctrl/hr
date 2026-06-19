@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/teamleader.css">
+    
+    <title>My Payslips | TL</title>
+    <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header"><h2>CKL HRMS</h2><p>Construction Services</p></div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="dashboard.php"> Dashboard</a></li>
+            <li class="nav-item"><a href="attendance-history.html"> My Attendance</a></li>
+            <li class="nav-item"><a href="for-validation.html"> For Validation</a></li>
+            <li class="nav-item"><a href="deployment-history.html"> Past Deployments</a></li>
+            <li class="nav-item"><a href="file-leave.html"> File a Leave</a></li>
+            <li class="nav-item active"><a href="payslips.html"> My Payslips</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">My Payslips</div>
+            <div class="user-info">
+                <span>Team Leader (Alpha)</span>
+                <a href="../index.html" class="logout-btn">Logout</a>
+            </div>
+        </div>
+        <div class="container">
+            <div class="panel">
+                <table>
+                    <thead><tr><th>Period</th><th>Gross Pay</th><th>Net Pay</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td>June 2026 (1st-15th)</td><td>₱13,200</td><td>₱11,850</td><td><button class="btn-view" onclick="alert('Payslip details for June 1-15 would appear here.')">View</button></td></tr>
+                        <tr><td>May 2026 (16th-30th)</td><td>₱12,800</td><td>₱11,500</td><td><button class="btn-view" onclick="alert('Payslip details for May 16-30 would appear here.')">View</button></td></tr>
+                        <tr><td>May 2026 (1st-15th)</td><td>₱13,000</td><td>₱11,700</td><td><button class="btn-view" onclick="alert('Payslip details for May 1-15 would appear here.')">View</button></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/payslips.js"></script>
+</body>
+</html>

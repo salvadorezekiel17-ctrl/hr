@@ -1,0 +1,144 @@
+// HR Leave Requests Management Module
+const HRLeaveRequests = (() => {
+    const API_ENDPOINT = `${API_BASE}hr/leave-requests`;
+
+    const init = () => {
+        loadData();
+        setupEventListeners();
+    };
+
+    const loadData = async () => {
+        try {
+            const response = await apiCall(API_ENDPOINT);
+            const data = response.data || [];
+            displayData(data);
+        } catch (error) {
+            console.error('Error loading leave requests:', error);
+            showMessage('message', 'Failed to load leave requests.', 'error');
+        }
+    };
+
+    const setupEventListeners = () => {
+        const approveBtn = document.getElementById('approveLeaveBtn');
+        const rejectBtn = document.getElementById('rejectLeaveBtn');
+        const viewBtn = document.getElementById('viewLeaveBtn');
+
+        if (approveBtn) approveBtn.addEventListener('click', handleApprove);
+        if (rejectBtn) rejectBtn.addEventListener('click', handleReject);
+        if (viewBtn) viewBtn.addEventListener('click', handleView);
+    };
+
+    const displayData = (data) => {
+        const container = document.getElementById('leaveRequestsContainer');
+        if (!container) return;
+
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p>No leave requests found.</p>';
+            return;
+        }
+
+        const html = data.map(item => `
+            <div class="leave-request-item" data-id="${item.id}">
+                <h3>${escapeHtml(item.employeeName || 'Leave Request')}</h3>
+                <p><strong>Type:</strong> ${escapeHtml(item.type || 'N/A')}</p>
+                <p><strong>Start Date:</strong> ${escapeHtml(item.startDate || 'N/A')}</p>
+                <p><strong>End Date:</strong> ${escapeHtml(item.endDate || 'N/A')}</p>
+                <p><strong>Reason:</strong> ${escapeHtml(item.reason || '')}</p>
+                <p><strong>Status:</strong> <span class="status">${escapeHtml(item.status || 'Pending')}</span></p>
+                <div class="actions">
+                    ${item.status === 'Pending' ? `
+                        <button class="approve-btn" data-id="${item.id}">Approve</button>
+                        <button class="reject-btn" data-id="${item.id}">Reject</button>
+                    ` : ''}
+                    <button class="view-btn" data-id="${item.id}">View</button>
+                </div>
+            </div>
+        `).join('');
+
+        container.innerHTML = html;
+
+        document.querySelectorAll('.approve-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => handleApprove(e.target.dataset.id));
+        });
+        document.querySelectorAll('.reject-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => handleReject(e.target.dataset.id));
+        });
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => handleView(e.target.dataset.id));
+        });
+    };
+
+    const handleApprove = async (id) => {
+        if (!id || !confirm('Are you sure you want to approve this leave request?')) return;
+
+        try {
+            const response = await apiCall(`${API_ENDPOINT}/${id}/approve`, 'POST', { status: 'approved' });
+            showMessage('message', 'Leave request approved successfully.', 'success');
+            loadData();
+        } catch (error) {
+            console.error('Error approving leave request:', error);
+            showMessage('message', 'Failed to approve leave request.', 'error');
+        }
+    };
+
+    const handleReject = async (id) => {
+        if (!id || !confirm('Are you sure you want to reject this leave request?')) return;
+
+        const reason = prompt('Please provide a reason for rejection:');
+        if (!reason) return;
+
+        try {
+            const response = await apiCall(`${API_ENDPOINT}/${id}/reject`, 'POST', { status: 'rejected', reason: reason });
+            showMessage('message', 'Leave request rejected successfully.', 'success');
+            loadData();
+        } catch (error) {
+            console.error('Error rejecting leave request:', error);
+            showMessage('message', 'Failed to reject leave request.', 'error');
+        }
+    };
+
+    const handleView = async (id) => {
+        if (!id) return;
+
+        try {
+            const response = await apiCall(`${API_ENDPOINT}/${id}`);
+            const data = response.data;
+            displayLeaveDetails(data);
+        } catch (error) {
+            console.error('Error loading leave details:', error);
+            showMessage('message', 'Failed to load leave details.', 'error');
+        }
+    };
+
+    const displayLeaveDetails = (data) => {
+        const modalContent = document.getElementById('leaveDetailsModal');
+        if (!modalContent) return;
+
+        const html = `
+            <div class="modal-content">
+                <h2>Leave Request Details</h2>
+                <p><strong>Employee:</strong> ${escapeHtml(data.employeeName || 'N/A')}</p>
+                <p><strong>Type:</strong> ${escapeHtml(data.type || 'N/A')}</p>
+                <p><strong>Start Date:</strong> ${escapeHtml(data.startDate || 'N/A')}</p>
+                <p><strong>End Date:</strong> ${escapeHtml(data.endDate || 'N/A')}</p>
+                <p><strong>Total Days:</strong> ${escapeHtml(data.totalDays || '0')}</p>
+                <p><strong>Reason:</strong> ${escapeHtml(data.reason || '')}</p>
+                <p><strong>Status:</strong> ${escapeHtml(data.status || 'N/A')}</p>
+                ${data.approvedBy ? `<p><strong>Approved By:</strong> ${escapeHtml(data.approvedBy || '')}</p>` : ''}
+                <button class="close-btn">Close</button>
+            </div>
+        `;
+
+        modalContent.innerHTML = html;
+        document.querySelector('.close-btn').addEventListener('click', () => {
+            modalContent.style.display = 'none';
+        });
+        modalContent.style.display = 'block';
+    };
+
+    return { init };
+})();
+
+document.addEventListener('DOMContentLoaded', () => {
+    HRLeaveRequests.init();
+});

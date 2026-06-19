@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/hr.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | HR</title>
+    <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header"><h2>CKL HRMS</h2><p>Construction Services</p></div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="dashboard.php">Dashboard</a></li>
+            <li class="nav-item"><a href="employees.html">Employee Directory</a></li>
+            <li class="nav-item"><a href="biometric-logs.html">Biometric Logs</a></li>
+            <li class="nav-item"><a href="field-deployments.html">Field Deployments</a></li>
+            <li class="nav-item"><a href="leave-requests.html">Leave Requests</a></li>
+            <li class="nav-item"><a href="payroll.html">Payroll</a></li>
+            <li class="nav-item"><a href="reports.html">Reports</a></li>
+            <li class="nav-item"><a href="hiring.html">Hiring</a></li>
+            <li class="nav-item active"><a href="create-account.html">Create New Account</a></li>
+            <li class="nav-item"><a href="offboarding-history.html">Offboarding History</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">Create New Account</div>
+            <div class="user-info">
+                <div class="dropdown">
+                    <button class="dropbtn" id="dropbtn">
+                        <span id="userNameDisplay">HR Administrator</span> <span style="font-size:0.8rem;">▼</span>
+                    </button>
+                    <div id="dropdownMenu" class="dropdown-content">
+                        <a href="../change-password.html">Change Password</a>
+                        <a href="../logout.php">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="panel">
+                <h2>New Employee Registration</h2>
+                <p class="sub">Create a new account for an employee</p>
+
+                <form id="createAccountForm">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="newName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="newEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Employee ID</label>
+                        <input type="text" id="newEmployeeId" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Position</label>
+                        <input type="text" id="newPosition" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="newRole">
+                            <option value="employee">Employee</option>
+                            <option value="team_leader">Team Leader</option>
+                            <option value="coordinator">Coordinator</option>
+                            <option value="hr">HR</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Daily Rate (₱)</label>
+                        <input type="number" id="dailyRate" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="text" id="newPassword" value="password">
+                    </div>
+                    <button type="submit" class="btn-submit">Create Account</button>
+                    <div id="message" class="message"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/forms.js"></script>
+    <script src="../js/create-account.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/hr.css">
+    <title>Biometric Logs | HR</title>
+    <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header"><h2>CKL HRMS</h2><p>Construction Services</p></div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="dashboard.php">Dashboard</a></li>
+            <li class="nav-item"><a href="employees.html">Employee Directory</a></li>
+            <li class="nav-item active"><a href="biometric-logs.html">Biometric Logs</a></li>
+            <li class="nav-item"><a href="field-deployments.html">Field Deployments</a></li>
+            <li class="nav-item"><a href="leave-requests.html">Leave Requests</a></li>
+            <li class="nav-item"><a href="payroll.html">Payroll</a></li>
+            <li class="nav-item"><a href="reports.html">Reports</a></li>
+            <li class="nav-item"><a href="hiring.html">Hiring</a></li>
+            <li class="nav-item"><a href="create-account.html">Create New Account</a></li>
+            <li class="nav-item"><a href="offboarding-history.html">Offboarding History</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">Biometric Logs & Attendance Adjustment</div>
+            <div class="user-info">
+                <div class="dropdown">
+                    <button class="dropbtn" id="dropbtn">
+                        <span id="userNameDisplay">HR Administrator</span> <span style="font-size:0.8rem;">▼</span>
+                    </button>
+                    <div id="dropdownMenu" class="dropdown-content">
+                        <a href="../change-password.html">Change Password</a>
+                        <a href="../logout.php">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="panel">
+                <div class="filters">
+                    <input type="text" id="dateFilter" placeholder="Date (dd/mm/yyyy)">
+                    <select id="statusFilter">
+                        <option value="all">All status</option>
+                        <option value="On time">On time</option>
+                        <option value="Late">Late</option>
+                    </select>
+                    <button class="refresh-btn" id="refreshBtn">Refresh</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="attendanceTable">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Timestamp (YY/MM/DD HH:MM:SS)</th>
+                                <th>Verification Method</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr><td colspan="5">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/biometric-logs.js"></script>
+</body>
+</html>
