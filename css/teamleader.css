@@ -1,0 +1,175 @@
+/* ========================================
+   TEAM LEADER CSS
+   Team leader module specific styling
+   ======================================== */
+
+.sidebar {
+    background: #0D1B5E;
+}
+
+.sidebar-header h2,
+.sidebar-header p {
+    color: #e0e4fa;
+}
+
+.sidebar-header p {
+    color: #7EA9D8;
+}
+
+.nav-item a {
+    color: #f7f5f5;
+}
+
+.nav-item a:hover {
+    background: #F2F5FB;
+    color: #0D1B5E;
+}
+
+.nav-item.active a {
+    background: #2D8BE8;
+    color: white;
+}
+.btn-view {
+    background: #2D8BE8;
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.main-content {
+    margin-left: 260px;
+}
+
+.search-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid #d4dee5;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    background: white;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #2c7da0;
+}
+
+.add-btn {
+    background: #2D8BE8;
+    color: white;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.add-btn:hover {
+    background: #1e5a74;
+}
+
+.dropbtn {
+    background: #2D8BE8;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: 0.2s;
+}
+
+.dropbtn:hover {
+    background: #1e5a74;
+}
+
+.save-btn {
+    background: #2c7da0;
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: 0.2s;
+}
+
+.save-btn:hover {
+    background: #1e5a74;
+}
+
+.action-btn {
+    padding: 4px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin: 0 2px;
+    transition: 0.2s;
+}
+
+.btn-edit {
+    background: #3498db;
+    color: white;
+}
+
+
+.btn-edit:hover {
+    background: #2980b9;
+}
+
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+}
+
+.modal-content label {
+    display: block;
+    font-weight: 600;
+    color: #1e4668;
+    margin: 1rem 0 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #d4dee5;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    margin-bottom: 0.5rem;
+}
+
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+    outline: none;
+    border-color: #2c7da0;
+    box-shadow: 0 0 0 3px rgba(44, 125, 160, 0.1);
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        margin-left: 70px;
+    }
+}
+

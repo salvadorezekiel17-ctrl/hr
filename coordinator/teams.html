@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/coordinator.css">
+    <title>Teams | Coordinator</title>
+    <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header"><h2>CKL HRMS</h2><p>Construction Services</p></div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="dashboard.php">Dashboard</a></li>
+            <li class="nav-item"><a href="available-employees.html">Available Employees</a></li>
+            <li class="nav-item"><a href="job-orders.html">Job Orders</a></li>
+            <li class="nav-item active"><a href="teams.html">Teams</a></li>
+            <li class="nav-item"><a href="active-deployments.html">Active Deployments</a></li>
+            <li class="nav-item"><a href="completed-job-orders.html">Completed Job Orders</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">Teams</div>
+            <div class="user-info">
+                <span>Coordinator</span>
+                <a href="../index.html" class="logout-btn">Logout</a>
+            </div>
+        </div>
+        <div class="container">
+            <div class="panel">
+                <h2>All Teams</h2>
+                <div id="teamsContainer" class="team-grid">
+                    <p>Loading teams...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/teams.js"></script>
+</body>
+</html>

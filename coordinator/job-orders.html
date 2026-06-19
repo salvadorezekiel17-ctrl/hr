@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/coordinator.css">
+    <title>Job Orders | Coordinator</title>
+    <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header"><h2>CKL HRMS</h2><p>Construction Services</p></div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="dashboard.php">Dashboard</a></li>
+            <li class="nav-item"><a href="available-employees.html">Available Employees</a></li>
+            <li class="nav-item active"><a href="job-orders.html">Job Orders</a></li>
+            <li class="nav-item"><a href="teams.html">Teams</a></li>
+            <li class="nav-item"><a href="active-deployments.html">Active Deployments</a></li>
+            <li class="nav-item"><a href="completed-job-orders.html">Completed Job Orders</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">Job Orders</div>
+            <div class="user-info">
+                <span>Coordinator</span>
+                <a href="../index.html" class="logout-btn">Logout</a>
+            </div>
+        </div>
+        <div class="container">
+            <div class="panel">
+                <h2>All Job Orders</h2>
+                <button class="create-btn" id="createJobBtn">New Job Order</button>
+                <div style="overflow-x: auto;">
+                    <table id="jobOrdersTable">
+                        <thead>
+                            <tr><th>ID</th><th>Ticket #</th><th>Location</th><th>Activity</th><th>Status</th><th>Start Date</th></tr>
+                        </thead>
+                        <tbody id="jobOrdersBody">
+                            <tr><td colspan="6">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal with all fields -->
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <h3>Create New Job Order (PLDT Format)</h3>
+            <div class="form-grid">
+                <div class="form-group"><label>Reference Number (Ticket No.)</label><input type="text" id="ticketNo"></div>
+                <div class="form-group"><label>Start Date</label><input type="date" id="startDate"></div>
+                <div class="form-group"><label>Location of Activity</label><input type="text" id="activityLocation"></div>
+                <div class="form-group"><label>Location Reference (Coordinates)</label><input type="text" id="locationReference"></div>
+                <div class="form-group"><label>Assigned Team</label><select id="assignedTeam"><option value="">Select Team</option><option>Alpha</option><option>Bravo</option><option>Charlie</option><option>Delta</option><option>Echo</option><option>Foxtrot</option><option>Golf</option></select></div>
+                <div class="form-group"><label>Work Schedule</label><input type="text" id="workSchedule"></div>
+                <div class="form-group"><label>Service Vehicle</label><input type="text" id="serviceVehicle"></div>
+                <div class="form-group"><label>Plate Number</label><input type="text" id="plateNumber"></div>
+                <div class="form-group full-width">
+                    <label>Type of Activity</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="activityType" value="Cable Restoration"> Cable Restoration</label>
+                        <label><input type="radio" name="activityType" value="Cable Relashing"> Cable Relashing</label>
+                        <label><input type="radio" name="activityType" value="Correction of Defective/Leaning Pole"> Correction of Defective/Leaning Pole</label>
+                        <label><input type="radio" name="activityType" value="Manhole Clearing"> Manhole Clearing</label>
+                        <label><input type="radio" name="activityType" value="Tree Trimming"> Tree Trimming</label>
+                        <label><input type="radio" name="activityType" value="Cable Retensioning"> Cable Retensioning</label>
+                        <label><input type="radio" name="activityType" value="Correction of Defective Accessories"> Correction of Defective Accessories</label>
+                        <label><input type="radio" name="activityType" value="Others"> Others <input type="text" id="othersActivity" style="width:120px; margin-left:5px;"></label>
+                    </div>
+                </div>
+                <div class="form-group full-width"><label>Description of Activity</label><textarea id="descriptionActivity" rows="2"></textarea></div>
+                <div class="form-group"><label>Dispatcher</label><select id="dispatcher"><option value="">Select</option><option>PLDT</option><option>Smart</option></select></div>
+                <div class="form-group"><label>Endorsed Time</label><input type="time" id="endorsedTime"></div>
+                <div class="form-group"><label>Restored Time (estimated)</label><input type="time" id="restoredTime"></div>
+                <div class="form-group"><label>Condition of Facility</label><select id="condition"><option value="">Select</option><option>COMPLETED</option><option>IN PROGRESS</option><option>PENDING</option><option>FOR VALIDATION</option></select></div>
+                <div class="form-group full-width"><label>Materials Used</label><textarea id="materials" rows="2"></textarea></div>
+                <div class="form-group full-width"><label>Action Taken</label><input type="text" id="actionTaken"></div>
+                <div class="form-group full-width"><label>Remarks</label><textarea id="remarks" rows="2"></textarea></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="cancel-btn" id="cancelCreateBtn">Cancel</button>
+                <button class="confirm-btn" id="confirmCreateBtn">Create Job Order</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/forms.js"></script>
+    <script src="../js/job-orders.js"></script>
+</body>
+</html>
