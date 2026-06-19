@@ -711,3 +711,37 @@ body.apply-page {
         padding: 6px 4px;
     }
 }
+/* Employee Directory Buttons - FIX */
+.btn-edit {
+    background: #3498db !important;
+    color: white !important;
+    border: none !important;
+    padding: 6px 16px !important;
+    border-radius: 20px !important;
+    cursor: pointer !important;
+    font-size: 0.75rem !important;
+    margin-right: 4px !important;
+    display: inline-block !important;
+}
+.btn-offboard {
+    background: #f39c12 !important;
+    color: white !important;
+    border: none !important;
+    padding: 6px 16px !important;
+    border-radius: 20px !important;
+    cursor: pointer !important;
+    font-size: 0.75rem !important;
+    margin-right: 4px !important;
+    display: inline-block !important;
+}
+.btn-delete {
+    background: #e74c3c !important;
+    color: white !important;
+    border: none !important;
+    padding: 6px 16px !important;
+    border-radius: 20px !important;
+    cursor: pointer !important;
+    font-size: 0.75rem !important;
+    margin-right: 4px !important;
+    display: inline-block !important;
+}

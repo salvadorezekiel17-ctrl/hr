@@ -33,8 +33,8 @@
                         <span id="userNameDisplay">HR Administrator</span> <span style="font-size:0.8rem;">▼</span>
                     </button>
                     <div id="dropdownMenu" class="dropdown-content">
-                        <a href="../change-password.html">Change Password</a>
-                        <a href="../backend/api/logout.php">Logout</a>
+                        <a href="/hrms/change-password.html">Change Password</a>
+                        <a href="/hrms/backend/api/logout.php">Logout</a>
                     </div>
                 </div>
             </div>
@@ -71,15 +71,15 @@
     <div id="addModal" class="modal">
         <div class="modal-content">
             <h3>Add New Employee</h3>
-            <label>Name</label>
+            <label for="addName">Name</label>
             <input type="text" id="addName" placeholder="Enter full name">
-            <label>Position</label>
+            <label for="addPosition">Position</label>
             <input type="text" id="addPosition" placeholder="e.g., TL, LINEMAN, DRIVER, HELPER">
-            <label>Department</label>
+            <label for="addDepartment">Department</label>
             <input type="text" id="addDepartment" placeholder="e.g., Operations, Field, Logistics">
-            <label>Daily Rate (₱)</label>
+            <label for="addDailyRate">Daily Rate (₱)</label>
             <input type="number" id="addDailyRate" placeholder="e.g., 800">
-            <label>Status</label>
+            <label for="addStatus">Status</label>
             <select id="addStatus">
                 <option>Active</option>
                 <option>On Leave</option>
@@ -87,7 +87,7 @@
                 <option>Inactive</option>
             </select>
             <div class="modal-buttons">
-                <button class="btn-submit" onclick="closeAddModal()">Cancel</button>
+                <button class="cancel-btn" onclick="closeAddModal()">Cancel</button>
                 <button class="save-btn" id="saveAddBtn">Add Employee</button>
             </div>
         </div>
@@ -98,15 +98,15 @@
         <div class="modal-content">
             <h3>Edit Employee</h3>
             <input type="hidden" id="editId">
-            <label>Name</label>
+            <label for="editName">Name</label>
             <input type="text" id="editName">
-            <label>Position</label>
+            <label for="editPosition">Position</label>
             <input type="text" id="editPosition">
-            <label>Department</label>
+            <label for="editDepartment">Department</label>
             <input type="text" id="editDepartment">
-            <label>Daily Rate (₱)</label>
+            <label for="editDailyRate">Daily Rate (₱)</label>
             <input type="number" id="editDailyRate">
-            <label>Status</label>
+            <label for="editStatus">Status</label>
             <select id="editStatus">
                 <option>Active</option>
                 <option>On Leave</option>
@@ -126,16 +126,16 @@
             <h3>Offboard Employee</h3>
             <input type="hidden" id="offboardId">
             <p id="offboardName"></p>
-            <label>Offboarding Date (YY/MM/DD)</label>
+            <label for="offboardDate">Offboarding Date (YY/MM/DD)</label>
             <input type="text" id="offboardDate" placeholder="26/06/30">
-            <label>Reason</label>
+            <label for="offboardReason">Reason</label>
             <select id="offboardReason">
                 <option>Resigned</option>
                 <option>Terminated</option>
                 <option>End of Contract</option>
                 <option>Retired</option>
             </select>
-            <label>Remarks (optional)</label>
+            <label for="offboardRemarks">Remarks (optional)</label>
             <textarea id="offboardRemarks" rows="2" placeholder="Additional notes..."></textarea>
             <div class="modal-buttons">
                 <button class="cancel-btn" onclick="closeOffboardModal()">Cancel</button>
@@ -144,9 +144,8 @@
         </div>
     </div>
 
-    
     <script src="../js/utils.js"></script>
     <script src="../js/auth.js"></script>
-    <script src="../js/employees.js"></script>
+    <script src="../js/employee-directory.js"></script>
 </body>
 </html>

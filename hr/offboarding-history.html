@@ -2,15 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offboarding History | HR | CKL Construction</title>
+    <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/hr.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offboarding History | HR</title>
-    <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
 </head>
 <body>
+    <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="sidebar-header"><h2>CKL HRMS</h2><p>Construction Services</p></div>
+        <div class="sidebar-header">
+            <h2>CKL HRMS</h2>
+            <p>Construction Services</p>
+        </div>
         <ul class="nav-menu">
             <li class="nav-item"><a href="dashboard.php">Dashboard</a></li>
             <li class="nav-item"><a href="employees.html">Employee Directory</a></li>
@@ -24,7 +28,10 @@
             <li class="nav-item active"><a href="offboarding-history.html">Offboarding History</a></li>
         </ul>
     </div>
+
+    <!-- MAIN CONTENT -->
     <div class="main-content">
+        <!-- TOP BAR -->
         <div class="top-bar">
             <div class="page-title">Employee Lifecycle</div>
             <div class="user-info">
@@ -33,56 +40,113 @@
                         <span id="userNameDisplay">HR Administrator</span> <span style="font-size:0.8rem;">▼</span>
                     </button>
                     <div id="dropdownMenu" class="dropdown-content">
-                        <a href="../change-password.html">Change Password</a>
-                        <a href="../backend/api/logout.php">Logout</a>
+                        <a href="/hrms/change-password.html">Change Password</a>
+                        <a href="/hrms/backend/api/logout.php">Logout</a>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- CONTENT -->
         <div class="container">
-            <!-- ONBOARDING -->
-            <div class="panel">
+            <!-- Onboarded Employees -->
+            <div class="onboarded-section">
                 <h2>Onboarded Employees</h2>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Position</th>
-                                <th>Onboard Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="onboardBody">
-                            <tr><td colspan="4" class="empty-message">Loading...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Onboard Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="onboardedTableBody">
+                        <tr><td colspan="5" class="no-data">Loading...</td></tr>
+                    </tbody>
+                </table>
             </div>
 
-            <!-- OFFBOARDING -->
-            <div class="panel">
+            <!-- Offboarded Employees -->
+            <div class="offboarded-section">
                 <h2>Offboarded Employees</h2>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Position</th>
-                                <th>Offboard Date</th>
-                                <th>Reason</th>
-                            </tr>
-                        </thead>
-                        <tbody id="offboardBody">
-                            <tr><td colspan="4" class="empty-message">Loading...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Offboard Date</th>
+                            <th>Reason</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="offboardedTableBody">
+                        <tr><td colspan="5" class="no-data">Loading...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    
+    <!-- ===== EDIT MODAL (Daily Rate REMOVED) ===== -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Employee</h3>
+            <input type="hidden" id="editId">
+
+            <label for="editName">Name</label>
+            <input type="text" id="editName">
+
+            <label for="editPosition">Position</label>
+            <input type="text" id="editPosition">
+
+            <label for="editDepartment">Department</label>
+            <input type="text" id="editDepartment">
+
+            <label for="editOnboardDate">Onboard Date</label>
+            <input type="date" id="editOnboardDate">
+
+            <label for="editStatus">Status</label>
+            <select id="editStatus">
+                <option>Active</option>
+                <option>On Leave</option>
+                <option>Probationary</option>
+                <option>Inactive</option>
+            </select>
+
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+                <button class="save-btn" id="saveEditBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== OFFBOARD MODAL ===== -->
+    <div id="offboardModal" class="modal">
+        <div class="modal-content">
+            <h3>Offboard Employee</h3>
+            <input type="hidden" id="offboardId">
+            <p id="offboardName"></p>
+            <label for="offboardDate">Offboarding Date (YY/MM/DD)</label>
+            <input type="text" id="offboardDate" placeholder="26/06/30">
+            <label for="offboardReason">Reason</label>
+            <select id="offboardReason">
+                <option>Resigned</option>
+                <option>Terminated</option>
+                <option>End of Contract</option>
+                <option>Retired</option>
+            </select>
+            <label for="offboardRemarks">Remarks (optional)</label>
+            <textarea id="offboardRemarks" rows="2" placeholder="Additional notes..."></textarea>
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeOffboardModal()">Cancel</button>
+                <button class="save-btn" id="saveOffboardBtn">Confirm Offboarding</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
     <script src="../js/utils.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/offboarding-history.js"></script>

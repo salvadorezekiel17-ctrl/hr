@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/hr.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Reports | Completed Job Orders</title>
     <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/hr.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
@@ -34,8 +34,8 @@
                         <span id="userNameDisplay">HR Administrator</span> <span style="font-size:0.8rem;">▼</span>
                     </button>
                     <div id="dropdownMenu" class="dropdown-content">
-                        <a href="../change-password.html">Change Password</a>
-                        <a href="../backend/api/logout.php">Logout</a>
+                        <a href="/hrms/change-password.html">Change Password</a>
+                        <a href="/hrms/backend/api/logout.php">Logout</a>
                     </div>
                 </div>
             </div>
@@ -48,24 +48,60 @@
         </div>
     </div>
 
-    <!-- Edit Modal (simplified) -->
+    <!-- Edit Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <h3>Edit Job Order Details</h3>
             <form id="editForm">
                 <div class="form-grid">
-                    <div class="form-group"><label>Ticket No.</label><input type="text" id="edit_ticket_no"></div>
-                    <div class="form-group"><label>Start Date</label><input type="date" id="edit_start_date"></div>
-                    <div class="form-group"><label>Activity Location</label><input type="text" id="edit_activity_location"></div>
-                    <div class="form-group"><label>Assigned Team</label><input type="text" id="edit_assigned_team"></div>
-                    <div class="form-group"><label>Activity Type</label><input type="text" id="edit_activity_type"></div>
-                    <div class="form-group"><label>Description</label><textarea id="edit_description_activity" rows="2"></textarea></div>
-                    <div class="form-group"><label>Dispatcher</label><input type="text" id="edit_dispatcher"></div>
-                    <div class="form-group"><label>Restored Time</label><input type="time" id="edit_restored_time"></div>
-                    <div class="form-group"><label>Condition</label><input type="text" id="edit_condition_facility"></div>
-                    <div class="form-group full-width"><label>Materials</label><textarea id="edit_materials" rows="2"></textarea></div>
-                    <div class="form-group full-width"><label>Action Taken</label><input type="text" id="edit_action_taken"></div>
-                    <div class="form-group full-width"><label>Remarks</label><textarea id="edit_remarks" rows="2"></textarea></div>
+                    <div class="form-group">
+                        <label for="edit_ticket_no">Ticket No.</label>
+                        <input type="text" id="edit_ticket_no">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_start_date">Start Date</label>
+                        <input type="date" id="edit_start_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_activity_location">Activity Location</label>
+                        <input type="text" id="edit_activity_location">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_assigned_team">Assigned Team</label>
+                        <input type="text" id="edit_assigned_team">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_activity_type">Activity Type</label>
+                        <input type="text" id="edit_activity_type">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_dispatcher">Dispatcher</label>
+                        <input type="text" id="edit_dispatcher">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_restored_time">Restored Time</label>
+                        <input type="time" id="edit_restored_time">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_condition_facility">Condition</label>
+                        <input type="text" id="edit_condition_facility">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="edit_description_activity">Description</label>
+                        <textarea id="edit_description_activity" rows="2"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="edit_materials">Materials</label>
+                        <textarea id="edit_materials" rows="2"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="edit_action_taken">Action Taken</label>
+                        <input type="text" id="edit_action_taken">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="edit_remarks">Remarks</label>
+                        <textarea id="edit_remarks" rows="2"></textarea>
+                    </div>
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="cancel-btn" id="closeEditModalBtn">Cancel</button>
@@ -77,6 +113,6 @@
 
     <script src="../js/utils.js"></script>
     <script src="../js/auth.js"></script>
-    <script src="../js/forms.js"></script>
+    <script src="../js/reports.js"></script>
 </body>
 </html>

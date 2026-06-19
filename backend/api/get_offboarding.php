@@ -1,13 +1,22 @@
 <?php
 header('Content-Type: application/json');
-require_once '../config/db.php';
+header('Access-Control-Allow-Origin: *');
 
-$stmt = $pdo->query("
-    SELECT o.*, e.name as employee_name, e.position 
-    FROM offboarding o 
-    JOIN employees e ON o.employee_id = e.id 
-    ORDER BY o.offboard_date DESC
-");
-$offboarding = $stmt->fetchAll(PDO::FETCH_ASSOC);
-echo json_encode(['success' => true, 'data' => $offboarding]);
+$host = 'localhost';
+$dbname = 'hrms_db';
+$username = 'root';
+$password = '';
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $stmt = $pdo->query("SELECT * FROM employees ORDER BY id DESC");
+    $employees = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo json_encode(['success' => true, 'data' => $employees]);
+
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+}
 ?>

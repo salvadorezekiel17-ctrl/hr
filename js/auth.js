@@ -244,3 +244,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+// Dropdown toggle for top bar
+document.addEventListener('DOMContentLoaded', function() {
+    const dropbtn = document.getElementById('dropbtn');
+    if (dropbtn) {
+        dropbtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('dropdownMenu').classList.toggle('show');
+        });
+        window.addEventListener('click', function() {
+            document.querySelectorAll('.dropdown-content').forEach(m => m.classList.remove('show'));
+        });
+    }
+
+    // Set user name from localStorage
+    const userName = localStorage.getItem('user_name') || 'Coordinator';
+    const nameDisplay = document.getElementById('userNameDisplay');
+    if (nameDisplay) nameDisplay.innerText = userName;
+});

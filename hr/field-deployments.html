@@ -2,14 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Field Deployments | HR | CKL Construction</title>
+    <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/hr.css">
-    <title>Field Deployments | HR</title>
-    <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
 </head>
 <body>
+    <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="sidebar-header"><h2>CKL HRMS</h2><p>Construction Services</p></div>
+        <div class="sidebar-header">
+            <h2>CKL HRMS</h2>
+            <p>Construction Services</p>
+        </div>
         <ul class="nav-menu">
             <li class="nav-item"><a href="dashboard.php">Dashboard</a></li>
             <li class="nav-item"><a href="employees.html">Employee Directory</a></li>
@@ -23,7 +28,10 @@
             <li class="nav-item"><a href="offboarding-history.html">Offboarding History</a></li>
         </ul>
     </div>
+
+    <!-- MAIN CONTENT -->
     <div class="main-content">
+        <!-- TOP BAR -->
         <div class="top-bar">
             <div class="page-title">Field Deployments</div>
             <div class="user-info">
@@ -32,35 +40,53 @@
                         <span id="userNameDisplay">HR Administrator</span> <span style="font-size:0.8rem;">▼</span>
                     </button>
                     <div id="dropdownMenu" class="dropdown-content">
-                        <a href="../change-password.html">Change Password</a>
-                        <a href="../backend/api/logout.php">Logout</a>
+                        <a href="/hrms/change-password.html">Change Password</a>
+                        <a href="/hrms/backend/api/logout.php">Logout</a>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- CONTENT -->
         <div class="container">
             <div class="panel">
-                <h2>Job Orders & Deployment Status</h2>
-                <div class="filter-bar">
+                <h2>Job Orders &amp; Deployment Status</h2>
+
+                <!-- FILTER BAR -->
+                <div class="search-bar">
                     <select id="statusFilter">
-                        <option value="all">All Statuses</option>
+                        <option value="">All Statuses</option>
                         <option value="Pending">Pending</option>
-                        <option value="Dispatched">Dispatched</option>
                         <option value="In Progress">In Progress</option>
-                        <option value="For Validation">For Validation</option>
                         <option value="Completed">Completed</option>
                     </select>
                     <input type="text" id="searchInput" placeholder="Search by project or team">
-                    <button class="refresh-btn" id="refreshBtn">Refresh</button>
+                    <button class="refresh-btn" onclick="location.reload()">Refresh</button>
                 </div>
+
+                <!-- TABLE -->
                 <div style="overflow-x: auto;">
-                    <div id="tableContainer"></div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Job Order #</th>
+                                <th>Project</th>
+                                <th>Location</th>
+                                <th>Team</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobOrdersBody">
+                            <tr><td colspan="6" class="empty-message">No job orders found.</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-    
+    <!-- SCRIPTS -->
     <script src="../js/utils.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/field-deployments.js"></script>

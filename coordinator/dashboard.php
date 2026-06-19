@@ -14,7 +14,7 @@ if ($user_role !== 'coordinator') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coordinator Dashboard | CKL Construction</title>
     <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
-    <link rel="stylesheet" href="../css/coordinator.css">
+    <link rel="stylesheet" href="../css/coordinator-dashboard.css">
 </head>
 <body>
     <div class="sidebar">
@@ -32,9 +32,16 @@ if ($user_role !== 'coordinator') {
         <div class="top-bar">
             <div class="page-title">Coordinator Dashboard</div>
             <div class="user-info">
-                <span>Coordinator</span>
-                <a href="/hrms/change-password.html" class="change-password-btn">Change Password</a>
-                <a href="/hrms/backend/api/logout.php" class="logout-btn">Logout</a>
+                <!-- DROPDOWN (like HR) -->
+                <div class="dropdown">
+                    <button class="dropbtn" id="dropbtn">
+                        <span id="userNameDisplay">Coordinator</span> <span style="font-size:0.8rem;">▼</span>
+                    </button>
+                    <div id="dropdownMenu" class="dropdown-content">
+                        <a href="../change-password.html">Change Password</a>
+                        <a href="../backend/api/logout.php">Logout</a>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="container">
@@ -56,14 +63,18 @@ if ($user_role !== 'coordinator') {
         </div>
     </div>
 
+    <!-- Assign Modal -->
     <div id="assignModal" class="modal">
         <div class="modal-content">
             <h3>Assign to Team</h3>
             <p id="assignEmployeeName"></p>
             <select id="teamSelect">
-                <option value="Alpha">Team Alpha</option><option value="Bravo">Team Bravo</option>
-                <option value="Charlie">Team Charlie</option><option value="Delta">Team Delta</option>
-                <option value="Echo">Team Echo</option><option value="Foxtrot">Team Foxtrot</option>
+                <option value="Alpha">Team Alpha</option>
+                <option value="Bravo">Team Bravo</option>
+                <option value="Charlie">Team Charlie</option>
+                <option value="Delta">Team Delta</option>
+                <option value="Echo">Team Echo</option>
+                <option value="Foxtrot">Team Foxtrot</option>
                 <option value="Golf">Team Golf</option>
             </select>
             <div class="modal-buttons">
@@ -73,6 +84,8 @@ if ($user_role !== 'coordinator') {
         </div>
     </div>
 
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
     <script src="../js/coordinator-dashboard.js"></script>
 </body>
 </html>

@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/coordinator.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teams | Coordinator</title>
     <link rel="icon" type="image/x-icon" href="../CKL-1.PNG">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/coordinator.css">
 </head>
 <body>
     <div class="sidebar">
@@ -23,8 +24,16 @@
         <div class="top-bar">
             <div class="page-title">Teams</div>
             <div class="user-info">
-                <span>Coordinator</span>
-                <a href="../index.html" class="logout-btn">Logout</a>
+                <!-- DROPDOWN (like HR) -->
+                <div class="dropdown">
+                    <button class="dropbtn" id="dropbtn">
+                        <span id="userNameDisplay">Coordinator</span> <span style="font-size:0.8rem;">▼</span>
+                    </button>
+                    <div id="dropdownMenu" class="dropdown-content">
+                        <a href="../change-password.html">Change Password</a>
+                        <a href="../backend/api/logout.php">Logout</a>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="container">
@@ -37,7 +46,6 @@
         </div>
     </div>
 
-    
     <script src="../js/utils.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/teams.js"></script>

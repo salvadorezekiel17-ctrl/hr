@@ -1,178 +1,276 @@
-// HR Hiring & Job Postings Module
+// HR Hiring - Load Applications
 const HRHiring = (() => {
-    const API_ENDPOINT = `${API_BASE}hr/hiring`;
+    const API_URL = '/hrms/backend/api/get_applications.php';
 
     const init = () => {
-        loadData();
-        setupEventListeners();
+        loadApplications();
     };
 
-    const loadData = async () => {
+    const loadApplications = async () => {
+        const tbody = document.getElementById('applicationsBody');
+        
         try {
-            const response = await apiCall(API_ENDPOINT);
-            const data = response.data || [];
-            displayData(data);
+            const response = await fetch(API_URL, {
+                credentials: 'include'
+            });
+            const data = await response.json();
+
+            if (!data.success) throw new Error(data.message);
+
+            const applications = data.data || [];
+
+            if (applications.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-message">No applications found.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            for (let app of applications) {
+                let statusBadge = getStatusBadge(app.status);
+                let actionButtons = `
+                    <button class="view-details" data-id="${app.id}">Details</button>
+                `;
+                if (app.status === 'pending') {
+                    actionButtons += `
+                        <button class="btn-interview" data-id="${app.id}">Schedule Interview</button>
+                        <button class="btn-approve" data-id="${app.id}">Approve</button>
+                        <button class="btn-reject" data-id="${app.id}">Reject</button>
+                    `;
+                } else if (app.status === 'interview_scheduled') {
+                    actionButtons += `<span style="font-size:0.7rem; color:#3498db;">Interview: ${escapeHtml(app.interview_type)}</span>`;
+                }
+                html += `<tr>
+                    <td>${escapeHtml(app.name)}</td>
+                    <td>${escapeHtml(app.email)}</td>
+                    <td>${escapeHtml(app.position_applied)}</td>
+                    <td>${statusBadge}</td>
+                    <td>${escapeHtml(app.applied_at)}</td>
+                    <td>${actionButtons}</td>
+                </tr>`;
+            }
+            tbody.innerHTML = html;
+
+            // Attach event listeners to buttons
+            attachEventListeners(applications);
+
         } catch (error) {
-            console.error('Error loading job postings:', error);
-            showMessage('message', 'Failed to load job postings.', 'error');
+            console.error('Error loading applications:', error);
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-message">Error loading applications. Please try again.</td></tr>';
         }
     };
 
-    const setupEventListeners = () => {
-        const createBtn = document.getElementById('createJobBtn');
-        const editBtn = document.getElementById('editJobBtn');
-        const closeBtn = document.getElementById('closeJobBtn');
-        const viewBtn = document.getElementById('viewJobBtn');
-
-        if (createBtn) createBtn.addEventListener('click', handleCreate);
-        if (editBtn) editBtn.addEventListener('click', handleEdit);
-        if (closeBtn) closeBtn.addEventListener('click', handleClose);
-        if (viewBtn) viewBtn.addEventListener('click', handleView);
+    const getStatusBadge = (status) => {
+        if (status === 'pending') return '<span class="badge-pending">Pending</span>';
+        if (status === 'interview_scheduled') return '<span class="badge-interview">Interview Scheduled</span>';
+        return status;
     };
 
-    const displayData = (data) => {
-        const container = document.getElementById('hiringContainer');
-        if (!container) return;
+    const attachEventListeners = (applications) => {
+        // View Details
+        document.querySelectorAll('.view-details').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const app = applications.find(a => a.id == id);
+                if (app) openModal(app);
+            });
+        });
 
-        if (!data || data.length === 0) {
-            container.innerHTML = '<p>No job postings found.</p>';
+        // Schedule Interview
+        document.querySelectorAll('.btn-interview').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                openInterviewModal(id);
+            });
+        });
+
+        // Approve
+        document.querySelectorAll('.btn-approve').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const app = applications.find(a => a.id == id);
+                if (app) openApproveModal(app);
+            });
+        });
+
+        // Reject
+        document.querySelectorAll('.btn-reject').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                if (confirm('Reject this application?')) {
+                    updateStatus(id, 'rejected');
+                }
+            });
+        });
+    };
+
+    // ---- Modal Functions ----
+    let currentApplicationId = null;
+    let currentApproveId = null;
+
+    function openModal(app) {
+        const modal = document.getElementById('detailsModal');
+        const body = document.getElementById('detailsBody');
+        body.innerHTML = `
+            <div class="field"><strong>Name:</strong> ${escapeHtml(app.name)}</div>
+            <div class="field"><strong>Email:</strong> ${escapeHtml(app.email)}</div>
+            <div class="field"><strong>Phone:</strong> ${escapeHtml(app.phone || '-')}</div>
+            <div class="field"><strong>Date of Birth:</strong> ${escapeHtml(app.date_of_birth || '-')}</div>
+            <div class="field"><strong>Address:</strong> ${escapeHtml(app.address || '-')}</div>
+            <div class="field"><strong>Position:</strong> ${escapeHtml(app.position_applied)}</div>
+            <div class="field"><strong>Years Experience:</strong> ${escapeHtml(app.years_experience || '0')}</div>
+            <div class="field"><strong>Skills:</strong> ${escapeHtml(app.skills || '-')}</div>
+            <div class="field"><strong>Experience:</strong> ${escapeHtml(app.experience || '-')}</div>
+            <div class="field"><strong>Applied:</strong> ${escapeHtml(app.applied_at)}</div>
+        `;
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('detailsModal').style.display = 'none';
+    }
+
+    function openInterviewModal(id) {
+        currentApplicationId = id;
+        document.getElementById('interviewModal').style.display = 'flex';
+    }
+
+    function closeInterviewModal() {
+        document.getElementById('interviewModal').style.display = 'none';
+        currentApplicationId = null;
+    }
+
+    function openApproveModal(app) {
+        currentApproveId = app.id;
+        document.getElementById('approveApplicantName').innerHTML = '<strong>' + escapeHtml(app.name) + '</strong> – ' + escapeHtml(app.position_applied);
+        document.getElementById('empId').value = '';
+        document.getElementById('empEmail').value = app.email;
+        document.getElementById('empRole').value = 'employee';
+        document.getElementById('dailyRate').value = '';
+        document.getElementById('approveMessage').textContent = '';
+        document.getElementById('approveModal').style.display = 'flex';
+    }
+
+    function closeApproveModal() {
+        document.getElementById('approveModal').style.display = 'none';
+        currentApproveId = null;
+    }
+
+    async function updateStatus(id, status) {
+        try {
+            const res = await fetch('/hrms/backend/api/update_leave_status.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ id, status })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert('Application ' + status);
+                loadApplications();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (e) {
+            alert('Request failed: ' + e.message);
+        }
+    }
+
+    // ---- Interview Form Submit ----
+    document.getElementById('interviewForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const interview_type = document.getElementById('interviewType').value;
+        const interview_date = document.getElementById('interviewDateTime').value;
+        const interview_notes = document.getElementById('interviewNotes').value.trim();
+
+        if (!interview_type || !interview_date) {
+            alert('Please fill all required fields.');
             return;
         }
 
-        const html = data.map(item => `
-            <div class="job-posting-item" data-id="${item.id}">
-                <h3>${escapeHtml(item.jobTitle || 'Job Posting')}</h3>
-                <p><strong>Position:</strong> ${escapeHtml(item.position || 'N/A')}</p>
-                <p><strong>Department:</strong> ${escapeHtml(item.department || 'N/A')}</p>
-                <p><strong>Open Positions:</strong> ${escapeHtml(item.openPositions || '0')}</p>
-                <p><strong>Salary Range:</strong> ${escapeHtml(item.salaryRange || 'N/A')}</p>
-                <p><strong>Status:</strong> <span class="status">${escapeHtml(item.status || 'Open')}</span></p>
-                <div class="actions">
-                    <button class="view-btn" data-id="${item.id}">View Applicants</button>
-                    <button class="edit-btn" data-id="${item.id}">Edit</button>
-                    ${item.status === 'Open' ? `<button class="close-btn" data-id="${item.id}">Close</button>` : ''}
-                </div>
-            </div>
-        `).join('');
+        try {
+            const res = await fetch('/hrms/backend/api/schedule_interview.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    id: currentApplicationId,
+                    interview_type,
+                    interview_date,
+                    interview_notes
+                })
+            });
+            const data = await res.json();
+            alert(data.message);
+            closeInterviewModal();
+            loadApplications();
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    });
 
-        container.innerHTML = html;
+    // ---- Approve Form Submit ----
+    document.getElementById('approveForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const employee_id = document.getElementById('empId').value.trim();
+        const email = document.getElementById('empEmail').value.trim();
+        const role = document.getElementById('empRole').value;
+        const daily_rate = document.getElementById('dailyRate').value.trim();
+        const msgDiv = document.getElementById('approveMessage');
 
-        document.querySelectorAll('.view-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => handleView(e.target.dataset.id));
-        });
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => handleEdit(e.target.dataset.id));
-        });
-        document.querySelectorAll('.close-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => handleClose(e.target.dataset.id));
-        });
-    };
+        if (!employee_id || !email || !daily_rate) {
+            msgDiv.innerHTML = '<span style="color:red;">Please fill all fields.</span>';
+            return;
+        }
 
-    const handleCreate = async () => {
-        const form = document.getElementById('jobForm');
-        if (!form) return;
-
-        const formData = new FormData(form);
-        const payload = Object.fromEntries(formData);
+        msgDiv.innerHTML = 'Creating account...';
 
         try {
-            const response = await apiCall(API_ENDPOINT, 'POST', payload);
-            showMessage('message', 'Job posting created successfully.', 'success');
-            loadData();
-            form.reset();
+            const res = await fetch('/hrms/backend/api/create_employee_account.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    application_id: currentApproveId,
+                    employee_id: employee_id,
+                    email: email,
+                    role: role,
+                    daily_rate: daily_rate
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                msgDiv.innerHTML = '<span style="color:green;">✅ ' + data.message + '</span>';
+                setTimeout(() => {
+                    closeApproveModal();
+                    loadApplications();
+                }, 1500);
+            } else {
+                msgDiv.innerHTML = '<span style="color:red;">Error: ' + data.message + '</span>';
+            }
         } catch (error) {
-            console.error('Error creating job posting:', error);
-            showMessage('message', 'Failed to create job posting.', 'error');
+            msgDiv.innerHTML = '<span style="color:red;">Error: ' + error.message + '</span>';
         }
-    };
+    });
 
-    const handleEdit = async (id) => {
-        if (!id) return;
+    // ---- Close Modal Functions (global) ----
+    window.closeModal = closeModal;
+    window.closeInterviewModal = closeInterviewModal;
+    window.closeApproveModal = closeApproveModal;
 
-        const form = document.getElementById('jobForm');
-        if (!form) return;
-
-        const formData = new FormData(form);
-        const payload = Object.fromEntries(formData);
-
-        try {
-            const response = await apiCall(`${API_ENDPOINT}/${id}`, 'PUT', payload);
-            showMessage('message', 'Job posting updated successfully.', 'success');
-            loadData();
-            form.reset();
-        } catch (error) {
-            console.error('Error updating job posting:', error);
-            showMessage('message', 'Failed to update job posting.', 'error');
-        }
-    };
-
-    const handleClose = async (id) => {
-        if (!id || !confirm('Are you sure you want to close this job posting?')) return;
-
-        try {
-            const response = await apiCall(`${API_ENDPOINT}/${id}/close`, 'POST');
-            showMessage('message', 'Job posting closed successfully.', 'success');
-            loadData();
-        } catch (error) {
-            console.error('Error closing job posting:', error);
-            showMessage('message', 'Failed to close job posting.', 'error');
-        }
-    };
-
-    const handleView = async (id) => {
-        if (!id) return;
-
-        try {
-            const response = await apiCall(`${API_ENDPOINT}/${id}/applicants`);
-            const applicants = response.data || [];
-            displayApplicants(applicants);
-        } catch (error) {
-            console.error('Error loading applicants:', error);
-            showMessage('message', 'Failed to load applicants.', 'error');
-        }
-    };
-
-    const displayApplicants = (applicants) => {
-        const modalContent = document.getElementById('applicantsModal');
-        if (!modalContent) return;
-
-        const html = `
-            <div class="modal-content">
-                <h2>Job Applicants</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${applicants.map(app => `
-                            <tr>
-                                <td>${escapeHtml(app.name || 'N/A')}</td>
-                                <td>${escapeHtml(app.email || 'N/A')}</td>
-                                <td>${escapeHtml(app.phone || 'N/A')}</td>
-                                <td>${escapeHtml(app.status || 'N/A')}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-                <button class="close-btn">Close</button>
-            </div>
-        `;
-
-        modalContent.innerHTML = html;
-        document.querySelector('.close-btn').addEventListener('click', () => {
-            modalContent.style.display = 'none';
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        str = String(str);
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
         });
-        modalContent.style.display = 'block';
-    };
+    }
 
     return { init };
 })();
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     HRHiring.init();
 });

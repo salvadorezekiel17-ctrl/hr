@@ -1,8 +1,4 @@
-/* ========================================
-   COORDINATOR DASHBOARD JS
-   Coordinator module dashboard specific functionality
-   ======================================== */
-
+// Coordinator Dashboard – Separate JS
 const API_BASE = '/hrms/backend/api/';
 let allEmployees = [];
 const teamNames = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo', 'Foxtrot', 'Golf'];
@@ -66,45 +62,31 @@ function openModal(id, name) {
     document.getElementById('assignEmployeeName').innerHTML = '<strong>' + name + '</strong>';
     document.getElementById('assignModal').style.display = 'flex';
 }
-
 function closeModal() {
     document.getElementById('assignModal').style.display = 'none';
     currentId = null;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('availableEmployeesList')) {
-        document.getElementById('availableEmployeesList').addEventListener('click', function(e) {
-            if (e.target.classList.contains('btn-assign')) {
-                openModal(parseInt(e.target.getAttribute('data-id')), e.target.getAttribute('data-name'));
-            }
-        });
+document.getElementById('availableEmployeesList').addEventListener('click', function(e) {
+    if (e.target.classList.contains('btn-assign')) {
+        openModal(parseInt(e.target.getAttribute('data-id')), e.target.getAttribute('data-name'));
     }
-
-    if (document.getElementById('confirmAssignBtn')) {
-        document.getElementById('confirmAssignBtn').onclick = async function() {
-            if (!currentId) return;
-            const team = document.getElementById('teamSelect').value;
-            const result = await assignToDatabase(currentId, team);
-            if (result.success) {
-                alert(currentName + ' assigned to Team ' + team);
-                await fetchEmployees();
-                closeModal();
-            } else {
-                alert('Error: ' + result.message);
-            }
-        };
-    }
-
-    if (document.getElementById('cancelAssignBtn')) {
-        document.getElementById('cancelAssignBtn').onclick = closeModal;
-    }
-
-    window.onclick = function(e) {
-        if (e.target === document.getElementById('assignModal')) {
-            closeModal();
-        }
-    };
-
-    fetchEmployees();
 });
+
+document.getElementById('confirmAssignBtn').onclick = async function() {
+    if (!currentId) return;
+    const team = document.getElementById('teamSelect').value;
+    const result = await assignToDatabase(currentId, team);
+    if (result.success) {
+        alert(currentName + ' assigned to Team ' + team);
+        await fetchEmployees();
+        closeModal();
+    } else {
+        alert('Error: ' + result.message);
+    }
+};
+document.getElementById('cancelAssignBtn').onclick = closeModal;
+window.onclick = function(e) { if (e.target === document.getElementById('assignModal')) closeModal(); };
+
+// Start
+fetchEmployees();

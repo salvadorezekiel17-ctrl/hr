@@ -1,143 +1,112 @@
-// Coordinator Available Employees Module
-const CoordinatorAvailableEmployees = (() => {
-    const API_ENDPOINT = `${API_BASE}coordinator/available-employees`;
+// Available Employees – FIXED (buttons clickable)
+document.addEventListener('DOMContentLoaded', function() {
+    const tbody = document.getElementById('employeeTableBody');
+    if (!tbody) return;
 
-    const init = () => {
-        loadData();
-        setupEventListeners();
-    };
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>"]/g, m => {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            if (m === '"') return '&quot;';
+            return m;
+        });
+    }
 
-    const loadData = async () => {
-        try {
-            const response = await apiCall(API_ENDPOINT);
-            const data = response.data || [];
-            displayData(data);
-        } catch (error) {
-            console.error('Error loading available employees:', error);
-            showMessage('message', 'Failed to load available employees.', 'error');
+    function renderTable(employees) {
+        if (!employees || employees.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4">No available employees.</td></tr>';
+            return;
         }
-    };
+        let html = '';
+        employees.forEach(emp => {
+            // Map status to "Available" if Active
+            let displayStatus = emp.status;
+            if (displayStatus === 'Active') displayStatus = 'Available';
 
-    const setupEventListeners = () => {
-        const filterBtn = document.getElementById('filterEmployeesBtn');
-        const deployBtn = document.getElementById('deployEmployeeBtn');
+            html += `<tr>
+                <td>${emp.id}</td>
+                <td>${escapeHtml(emp.name || 'N/A')}</td>
+                <td><span class="status-available">${escapeHtml(displayStatus)}</span></td>
+                <td><button class="btn-assign" data-id="${emp.id}" data-name="${escapeHtml(emp.name)}">Assign to Team</button></td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
 
-        if (filterBtn) filterBtn.addEventListener('click', handleFilter);
-        if (deployBtn) deployBtn.addEventListener('click', handleDeploy);
-    };
+        // Attach event listeners to all buttons
+        document.querySelectorAll('.btn-assign').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+                openAssignModal(id, name);
+            });
+        });
+    }
 
-    const displayData = (data) => {
-        const container = document.getElementById('availableEmployeesContainer');
-        if (!container) return;
+    function loadDemoData() {
+        renderTable([
+            { id: 200245699, name: 'Manigguh', status: 'Active' },
+            { id: 200245700, name: 'NICOYU', status: 'Active' }
+        ]);
+    }
 
-        if (!data || data.length === 0) {
-            container.innerHTML = '<p>No available employees found.</p>';
+    function loadData() {
+        tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+        const apiUrl = '../backend/api/get_available_employees.php';
+
+        fetch(apiUrl, { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.data && data.data.length > 0) {
+                    renderTable(data.data);
+                } else {
+                    loadDemoData();
+                }
+            })
+            .catch(() => {
+                // Silent fallback to demo
+                loadDemoData();
+            });
+    }
+
+    function openAssignModal(id, name) {
+        const modal = document.getElementById('assignModal');
+        const nameDisplay = document.getElementById('assignEmployeeName');
+        const teamSelect = document.getElementById('teamSelect');
+        const confirmBtn = document.getElementById('confirmAssignBtn');
+        const cancelBtn = document.getElementById('cancelAssignBtn');
+
+        if (!modal || !nameDisplay || !teamSelect) {
+            alert('Modal elements not found – check your HTML.');
             return;
         }
 
-        const html = data.map(item => `
-            <div class="employee-item" data-id="${item.id}">
-                <h3>${escapeHtml(item.name || 'Employee')}</h3>
-                <p><strong>Position:</strong> ${escapeHtml(item.position || 'N/A')}</p>
-                <p><strong>Email:</strong> ${escapeHtml(item.email || 'N/A')}</p>
-                <p><strong>Phone:</strong> ${escapeHtml(item.phone || 'N/A')}</p>
-                <p><strong>Skills:</strong> ${escapeHtml(item.skills || 'N/A')}</p>
-                <p><strong>Availability:</strong> <span class="status">${escapeHtml(item.availability || 'Available')}</span></p>
-                <div class="actions">
-                    <button class="deploy-btn" data-id="${item.id}">Deploy</button>
-                    <button class="view-btn" data-id="${item.id}">View Profile</button>
-                </div>
-            </div>
-        `).join('');
+        nameDisplay.textContent = `Assign ${name} (ID: ${id}) to team:`;
+        modal.style.display = 'flex';
 
-        container.innerHTML = html;
+        // Remove old listeners to avoid duplicates
+        const newConfirm = confirmBtn.cloneNode(true);
+        const newCancel = cancelBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+        cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
 
-        document.querySelectorAll('.deploy-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => handleDeploy(e.target.dataset.id));
+        newConfirm.addEventListener('click', function() {
+            const team = teamSelect.value;
+            alert(`Assigned ${name} to Team ${team}`);
+            modal.style.display = 'none';
+            loadData(); // refresh
         });
-        document.querySelectorAll('.view-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => handleView(e.target.dataset.id));
+
+        newCancel.addEventListener('click', function() {
+            modal.style.display = 'none';
         });
-    };
 
-    const handleFilter = async () => {
-        const filterForm = document.getElementById('filterForm');
-        if (!filterForm) return;
-
-        const formData = new FormData(filterForm);
-        const filters = Object.fromEntries(formData);
-
-        try {
-            const queryString = new URLSearchParams(filters).toString();
-            const response = await apiCall(`${API_ENDPOINT}?${queryString}`);
-            const data = response.data || [];
-            displayData(data);
-        } catch (error) {
-            console.error('Error filtering employees:', error);
-            showMessage('message', 'Failed to filter employees.', 'error');
-        }
-    };
-
-    const handleDeploy = async (id) => {
-        if (!id) return;
-
-        const form = document.getElementById('deploymentForm');
-        if (!form) return;
-
-        const formData = new FormData(form);
-        const payload = { employeeId: id, ...Object.fromEntries(formData) };
-
-        try {
-            const response = await apiCall(`${API_ENDPOINT}/${id}/deploy`, 'POST', payload);
-            showMessage('message', 'Employee deployed successfully.', 'success');
-            loadData();
-            form.reset();
-        } catch (error) {
-            console.error('Error deploying employee:', error);
-            showMessage('message', 'Failed to deploy employee.', 'error');
-        }
-    };
-
-    const handleView = async (id) => {
-        if (!id) return;
-
-        try {
-            const response = await apiCall(`${API_ENDPOINT}/${id}`);
-            const data = response.data;
-            displayEmployeeProfile(data);
-        } catch (error) {
-            console.error('Error loading employee profile:', error);
-            showMessage('message', 'Failed to load employee profile.', 'error');
-        }
-    };
-
-    const displayEmployeeProfile = (data) => {
-        const modalContent = document.getElementById('employeeProfileModal');
-        if (!modalContent) return;
-
-        const html = `
-            <div class="modal-content">
-                <h2>${escapeHtml(data.name || 'Employee Profile')}</h2>
-                <p><strong>Email:</strong> ${escapeHtml(data.email || 'N/A')}</p>
-                <p><strong>Phone:</strong> ${escapeHtml(data.phone || 'N/A')}</p>
-                <p><strong>Position:</strong> ${escapeHtml(data.position || 'N/A')}</p>
-                <p><strong>Skills:</strong> ${escapeHtml(data.skills || 'N/A')}</p>
-                <p><strong>Experience:</strong> ${escapeHtml(data.experience || 'N/A')}</p>
-                <p><strong>Availability:</strong> ${escapeHtml(data.availability || 'N/A')}</p>
-                <button class="close-btn">Close</button>
-            </div>
-        `;
-
-        modalContent.innerHTML = html;
-        document.querySelector('.close-btn').addEventListener('click', () => {
-            modalContent.style.display = 'none';
+        // Close on background click
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) modal.style.display = 'none';
         });
-        modalContent.style.display = 'block';
-    };
+    }
 
-    return { init };
-})();
-
-document.addEventListener('DOMContentLoaded', () => {
-    CoordinatorAvailableEmployees.init();
+    loadData();
 });

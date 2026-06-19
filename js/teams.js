@@ -1,179 +1,79 @@
-// Coordinator Teams Module
-const CoordinatorTeams = (() => {
-    const API_ENDPOINT = `${API_BASE}coordinator/teams`;
+// Teams – Separate JS (uses global API_BASE)
+// API_BASE is already defined in utils.js – do NOT redeclare it here.
 
-    const init = () => {
-        loadData();
-        setupEventListeners();
-    };
-
-    const loadData = async () => {
-        try {
-            const response = await apiCall(API_ENDPOINT);
-            const data = response.data || [];
-            displayData(data);
-        } catch (error) {
-            console.error('Error loading teams:', error);
-            showMessage('message', 'Failed to load teams.', 'error');
+async function fetchTeams() {
+    try {
+        const empRes = await fetch(API_BASE + 'get_employees.php', { credentials: 'include' });
+        const empData = await empRes.json();
+        if (!empData.success) throw new Error();
+        const employees = empData.data;
+        
+        const teams = {};
+        for (let emp of employees) {
+            let team = emp.current_team;
+            if (team && team !== '') {
+                if (!teams[team]) teams[team] = [];
+                teams[team].push(emp);
+            }
         }
-    };
-
-    const setupEventListeners = () => {
-        const createBtn = document.getElementById('createTeamBtn');
-        const editBtn = document.getElementById('editTeamBtn');
-        const deleteBtn = document.getElementById('deleteTeamBtn');
-        const addMemberBtn = document.getElementById('addMemberBtn');
-
-        if (createBtn) createBtn.addEventListener('click', handleCreate);
-        if (editBtn) editBtn.addEventListener('click', handleEdit);
-        if (deleteBtn) deleteBtn.addEventListener('click', handleDelete);
-        if (addMemberBtn) addMemberBtn.addEventListener('click', handleAddMember);
-    };
-
-    const displayData = (data) => {
-        const container = document.getElementById('teamsContainer');
-        if (!container) return;
-
-        if (!data || data.length === 0) {
-            container.innerHTML = '<p>No teams found.</p>';
-            return;
+        // Predefined team names for display
+        const allTeamNames = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo', 'Foxtrot', 'Golf'];
+        for (let name of allTeamNames) {
+            if (!teams[name]) teams[name] = [];
         }
+        renderTeams(teams);
+    } catch(e) {
+        document.getElementById('teamsContainer').innerHTML = '<p>Error loading teams.</p>';
+    }
+}
 
-        const html = data.map(item => `
-            <div class="team-item" data-id="${item.id}">
-                <h3>${escapeHtml(item.name || 'Team')}</h3>
-                <p><strong>Team Lead:</strong> ${escapeHtml(item.teamLead || 'N/A')}</p>
-                <p><strong>Members:</strong> ${escapeHtml(item.memberCount || '0')}</p>
-                <p><strong>Department:</strong> ${escapeHtml(item.department || 'N/A')}</p>
-                <p><strong>Status:</strong> <span class="status">${escapeHtml(item.status || 'Active')}</span></p>
-                <p><strong>Description:</strong> ${escapeHtml(item.description || '')}</p>
-                <div class="actions">
-                    <button class="view-btn" data-id="${item.id}">View Members</button>
-                    <button class="edit-btn" data-id="${item.id}">Edit</button>
-                    <button class="delete-btn" data-id="${item.id}">Delete</button>
-                </div>
-            </div>
-        `).join('');
-
-        container.innerHTML = html;
-
-        document.querySelectorAll('.view-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => handleView(e.target.dataset.id));
+function renderTeams(teams) {
+    const container = document.getElementById('teamsContainer');
+    let html = '';
+    for (let [teamName, members] of Object.entries(teams)) {
+        html += `<div class="team-card"><h3>Team ${teamName}</h3>`;
+        if (members.length === 0) {
+            html += '<p style="color: gray; font-size: 0.8rem;">No members assigned.</p>';
+        } else {
+            html += '<ul class="employee-list">';
+            for (let member of members) {
+                html += `<li>${member.name} <button class="unassign-btn" data-id="${member.id}" data-team="${teamName}">Remove</button></li>`;
+            }
+            html += '</ul>';
+        }
+        html += '</div>';
+    }
+    container.innerHTML = html;
+    
+    document.querySelectorAll('.unassign-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const empId = this.getAttribute('data-id');
+            const team = this.getAttribute('data-team');
+            if (confirm(`Remove employee from Team ${team}? They will become available.`)) {
+                await unassignEmployee(empId);
+            }
         });
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => handleEdit(e.target.dataset.id));
+    });
+}
+
+async function unassignEmployee(empId) {
+    try {
+        const res = await fetch(API_BASE + 'unassign_employee.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ employee_id: empId })
         });
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => handleDelete(e.target.dataset.id));
-        });
-    };
-
-    const handleCreate = async () => {
-        const form = document.getElementById('teamForm');
-        if (!form) return;
-
-        const formData = new FormData(form);
-        const payload = Object.fromEntries(formData);
-
-        try {
-            const response = await apiCall(API_ENDPOINT, 'POST', payload);
-            showMessage('message', 'Team created successfully.', 'success');
-            loadData();
-            form.reset();
-        } catch (error) {
-            console.error('Error creating team:', error);
-            showMessage('message', 'Failed to create team.', 'error');
+        const data = await res.json();
+        if (data.success) {
+            alert('Employee removed from team and is now available.');
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
         }
-    };
+    } catch(e) {
+        alert('Request failed: ' + e.message);
+    }
+}
 
-    const handleEdit = async (id) => {
-        if (!id) return;
-
-        const form = document.getElementById('teamForm');
-        if (!form) return;
-
-        const formData = new FormData(form);
-        const payload = Object.fromEntries(formData);
-
-        try {
-            const response = await apiCall(`${API_ENDPOINT}/${id}`, 'PUT', payload);
-            showMessage('message', 'Team updated successfully.', 'success');
-            loadData();
-            form.reset();
-        } catch (error) {
-            console.error('Error updating team:', error);
-            showMessage('message', 'Failed to update team.', 'error');
-        }
-    };
-
-    const handleDelete = async (id) => {
-        if (!id || !confirm('Are you sure you want to delete this team?')) return;
-
-        try {
-            await apiCall(`${API_ENDPOINT}/${id}`, 'DELETE');
-            showMessage('message', 'Team deleted successfully.', 'success');
-            loadData();
-        } catch (error) {
-            console.error('Error deleting team:', error);
-            showMessage('message', 'Failed to delete team.', 'error');
-        }
-    };
-
-    const handleView = async (id) => {
-        if (!id) return;
-
-        try {
-            const response = await apiCall(`${API_ENDPOINT}/${id}/members`);
-            const members = response.data || [];
-            displayTeamMembers(members);
-        } catch (error) {
-            console.error('Error loading team members:', error);
-            showMessage('message', 'Failed to load team members.', 'error');
-        }
-    };
-
-    const handleAddMember = async () => {
-        const form = document.getElementById('addMemberForm');
-        if (!form) return;
-
-        const formData = new FormData(form);
-        const payload = Object.fromEntries(formData);
-
-        try {
-            const response = await apiCall(`${API_ENDPOINT}/${payload.teamId}/members`, 'POST', payload);
-            showMessage('message', 'Member added successfully.', 'success');
-            loadData();
-            form.reset();
-        } catch (error) {
-            console.error('Error adding member:', error);
-            showMessage('message', 'Failed to add member.', 'error');
-        }
-    };
-
-    const displayTeamMembers = (members) => {
-        const modalContent = document.getElementById('teamMembersModal');
-        if (!modalContent) return;
-
-        const html = `
-            <div class="modal-content">
-                <h2>Team Members</h2>
-                <ul>
-                    ${members.map(member => `<li>${escapeHtml(member.name || 'N/A')} - ${escapeHtml(member.position || 'N/A')}</li>`).join('')}
-                </ul>
-                <button class="close-btn">Close</button>
-            </div>
-        `;
-
-        modalContent.innerHTML = html;
-        document.querySelector('.close-btn').addEventListener('click', () => {
-            modalContent.style.display = 'none';
-        });
-        modalContent.style.display = 'block';
-    };
-
-    return { init };
-})();
-
-document.addEventListener('DOMContentLoaded', () => {
-    CoordinatorTeams.init();
-});
+fetchTeams();

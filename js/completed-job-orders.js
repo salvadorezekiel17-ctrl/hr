@@ -1,119 +1,61 @@
-// Coordinator Completed Job Orders Module
-const CoordinatorCompletedJobOrders = (() => {
-    const API_ENDPOINT = `${API_BASE}coordinator/completed-job-orders`;
+// Completed Job Orders – Separate JS (uses global API_BASE)
+// API_BASE is already defined in utils.js – do NOT redeclare it here.
 
-    const init = () => {
-        loadData();
-        setupEventListeners();
-    };
-
-    const loadData = async () => {
-        try {
-            const response = await apiCall(API_ENDPOINT);
-            const data = response.data || [];
-            displayData(data);
-        } catch (error) {
-            console.error('Error loading completed job orders:', error);
-            showMessage('message', 'Failed to load completed job orders.', 'error');
+async function fetchCompletedDeployments() {
+    try {
+        const res = await fetch(API_BASE + 'get_completed_deployments.php', { credentials: 'include' });
+        const data = await res.json();
+        if (data.success && data.data.length > 0) {
+            renderCompleted(data.data);
+        } else {
+            document.getElementById('completedList').innerHTML = '<p>No completed job orders yet.</p>';
         }
-    };
+    } catch(e) {
+        document.getElementById('completedList').innerHTML = '<p>Error loading data.</p>';
+    }
+}
 
-    const setupEventListeners = () => {
-        const viewBtn = document.getElementById('viewJobOrderBtn');
-        const archiveBtn = document.getElementById('archiveJobOrderBtn');
-
-        if (viewBtn) viewBtn.addEventListener('click', handleView);
-        if (archiveBtn) archiveBtn.addEventListener('click', handleArchive);
-    };
-
-    const displayData = (data) => {
-        const container = document.getElementById('completedJobOrdersContainer');
-        if (!container) return;
-
-        if (!data || data.length === 0) {
-            container.innerHTML = '<p>No completed job orders found.</p>';
-            return;
+function renderCompleted(deployments) {
+    const container = document.getElementById('completedList');
+    let html = '';
+    for (let dep of deployments) {
+        let completedDate = dep.completed_at ? new Date(dep.completed_at).toLocaleDateString() : 'Unknown date';
+        let photoHtml = '';
+        if (dep.completion_photo) {
+            photoHtml = `<div class="completion-photo"><img src="${dep.completion_photo}" alt="Completion proof" class="photo-thumb" data-photo="${dep.completion_photo}"></div>`;
+        } else {
+            photoHtml = `<div class="completion-photo"><span class="status-badge">No photo</span></div>`;
         }
-
-        const html = data.map(item => `
-            <div class="job-order-item" data-id="${item.id}">
-                <h3>${escapeHtml(item.jobTitle || 'Job Order')}</h3>
-                <p><strong>Order ID:</strong> ${escapeHtml(item.orderId || 'N/A')}</p>
-                <p><strong>Client:</strong> ${escapeHtml(item.client || 'N/A')}</p>
-                <p><strong>Completion Date:</strong> ${escapeHtml(item.completionDate || 'N/A')}</p>
-                <p><strong>Filled Positions:</strong> ${escapeHtml(item.filledPositions || '0')}</p>
-                <p><strong>Status:</strong> <span class="status">${escapeHtml(item.status || 'Completed')}</span></p>
-                <div class="actions">
-                    <button class="view-btn" data-id="${item.id}">View</button>
-                    <button class="archive-btn" data-id="${item.id}">Archive</button>
+        html += `
+            <div class="job-card">
+                <div class="job-info">
+                    <h3>Job Order #${dep.job_order_id || dep.id}</h3>
+                    <p><strong>Team:</strong> ${dep.team_name || dep.team || 'N/A'}</p>
+                    <p><strong>Employees:</strong> ${Array.isArray(dep.employees) ? dep.employees.join(', ') : dep.employee_names || 'N/A'}</p>
+                    <p><strong>Completed on:</strong> ${completedDate}</p>
+                    <span class="status-badge">Completed</span>
                 </div>
-            </div>
-        `).join('');
-
-        container.innerHTML = html;
-
-        document.querySelectorAll('.view-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => handleView(e.target.dataset.id));
-        });
-        document.querySelectorAll('.archive-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => handleArchive(e.target.dataset.id));
-        });
-    };
-
-    const handleView = async (id) => {
-        if (!id) return;
-
-        try {
-            const response = await apiCall(`${API_ENDPOINT}/${id}`);
-            const data = response.data;
-            displayJobOrderDetails(data);
-        } catch (error) {
-            console.error('Error loading job order details:', error);
-            showMessage('message', 'Failed to load job order details.', 'error');
-        }
-    };
-
-    const handleArchive = async (id) => {
-        if (!id || !confirm('Are you sure you want to archive this job order?')) return;
-
-        try {
-            const response = await apiCall(`${API_ENDPOINT}/${id}/archive`, 'POST');
-            showMessage('message', 'Job order archived successfully.', 'success');
-            loadData();
-        } catch (error) {
-            console.error('Error archiving job order:', error);
-            showMessage('message', 'Failed to archive job order.', 'error');
-        }
-    };
-
-    const displayJobOrderDetails = (data) => {
-        const modalContent = document.getElementById('jobOrderDetailsModal');
-        if (!modalContent) return;
-
-        const html = `
-            <div class="modal-content">
-                <h2>${escapeHtml(data.jobTitle || 'Job Order Details')}</h2>
-                <p><strong>Order ID:</strong> ${escapeHtml(data.orderId || 'N/A')}</p>
-                <p><strong>Client:</strong> ${escapeHtml(data.client || 'N/A')}</p>
-                <p><strong>Job Description:</strong> ${escapeHtml(data.description || 'N/A')}</p>
-                <p><strong>Completion Date:</strong> ${escapeHtml(data.completionDate || 'N/A')}</p>
-                <p><strong>Filled Positions:</strong> ${escapeHtml(data.filledPositions || '0')}</p>
-                <p><strong>Total Positions:</strong> ${escapeHtml(data.totalPositions || '0')}</p>
-                <p><strong>Status:</strong> ${escapeHtml(data.status || 'N/A')}</p>
-                <button class="close-btn">Close</button>
+                ${photoHtml}
             </div>
         `;
+    }
+    container.innerHTML = html;
 
-        modalContent.innerHTML = html;
-        document.querySelector('.close-btn').addEventListener('click', () => {
-            modalContent.style.display = 'none';
+    document.querySelectorAll('.photo-thumb').forEach(img => {
+        img.addEventListener('click', function() {
+            const photoUrl = this.getAttribute('data-photo');
+            document.getElementById('modalPhoto').src = photoUrl;
+            document.getElementById('photoModal').style.display = 'flex';
         });
-        modalContent.style.display = 'block';
-    };
+    });
+}
 
-    return { init };
-})();
+document.getElementById('closePhotoModal').onclick = function() {
+    document.getElementById('photoModal').style.display = 'none';
+};
+window.onclick = function(e) {
+    const modal = document.getElementById('photoModal');
+    if (e.target === modal) modal.style.display = 'none';
+};
 
-document.addEventListener('DOMContentLoaded', () => {
-    CoordinatorCompletedJobOrders.init();
-});
+fetchCompletedDeployments();
