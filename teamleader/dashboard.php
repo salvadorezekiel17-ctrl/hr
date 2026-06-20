@@ -34,7 +34,7 @@ if ($user_role !== 'team_leader') {
             <div class="user-info">
                 <span>Team Leader (Alpha)</span>
                 <a href="../change-password.html" class="change-password-btn">Change Password</a>
-                <a href="/hrms/backend/api/logout.php" class="logout-btn">Logout</a>
+                <a href="../backend/api/logout.php" class="logout-btn">Logout</a>
             </div>
         </div>
         <div class="container">
