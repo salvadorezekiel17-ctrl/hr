@@ -1,4 +1,4 @@
-
+        .body { background: #f0f2f5; display: flex; height: 100vh; }
         .sidebar {
             width: 260px;
             background: #0D1B5E;

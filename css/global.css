@@ -264,7 +264,17 @@ button {
     cursor: pointer;
     transition: 0.2s;
 }
-
+.btn-submit {
+    background: #2c7da0;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
 .btn-submit:hover,
 .btn-login:hover,
 .confirm-btn:hover {
